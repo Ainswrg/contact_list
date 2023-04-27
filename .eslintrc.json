@@ -15,6 +15,8 @@
   "plugins": ["prettier", "react"],
   "rules": {
     "semi": "off",
-    "@typescript-eslint/semi": ["error"]
+    "@typescript-eslint/semi": ["error"],
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off"
   }
 }

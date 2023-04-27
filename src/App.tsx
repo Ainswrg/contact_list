@@ -2,11 +2,12 @@
 import React from 'react'
 
 import './App.css'
+import Login from './pages/login/Login'
 
 function App (): any {
   return (
     <div className="App">
-      <h1>Home</h1>
+      <Login />
     </div>
   )
 }
