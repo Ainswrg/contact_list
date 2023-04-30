@@ -3,7 +3,7 @@ import type { AnyAction, Reducer } from '@reduxjs/toolkit'
 import type { IAuth } from './types'
 
 const initialState: IAuth = {
-  isAuth: false
+  isAuth: localStorage.getItem('isAuth') === 'true'
 }
 export const authSlice = createSlice({
   name: 'auth',
@@ -11,9 +11,11 @@ export const authSlice = createSlice({
   reducers: {
     login: (state) => {
       state.isAuth = true
+      localStorage.setItem('isAuth', 'true')
     },
     logout: (state) => {
       state.isAuth = false
+      localStorage.setItem('isAuth', 'true')
     }
   }
 })
