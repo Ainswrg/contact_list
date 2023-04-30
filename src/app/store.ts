@@ -1,8 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
-import type { ThunkAction, Action } from '@reduxjs/toolkit'
+import type { ThunkAction, Action, AnyAction, Reducer } from '@reduxjs/toolkit'
+import { authReducer } from '../slices/auth/slice'
+
+interface IAuth {
+  isAuth: boolean
+}
 
 export const store = configureStore({
-  reducer: {}
+  reducer: {
+    auth: authReducer as Reducer<IAuth, AnyAction>
+  }
 })
 
 export type AppDispatch = typeof store.dispatch

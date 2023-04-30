@@ -14,12 +14,9 @@ export const authSlice = createSlice({
     },
     logout: (state) => {
       state.isAuth = false
-    },
-    toggleAuth: (state) => {
-      state.isAuth = !state.isAuth
     }
   }
 })
 
 export const authReducer: Reducer<IAuth, AnyAction> = authSlice.reducer
-export const { login, logout, toggleAuth } = authSlice.actions
+export const { login, logout } = authSlice.actions
