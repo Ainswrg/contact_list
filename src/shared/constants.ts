@@ -5,3 +5,18 @@ export const enum PathRoutes {
   login = '/login',
   contacts = '/contacts'
 }
+
+export interface UserItem {
+  name: string
+  username: string
+  avatar: string
+  email: string
+  id: string
+}
+
+export interface ContactItem {
+  name: string
+  phone: string
+  avatar: string
+  id: string
+}

@@ -6,34 +6,23 @@ import LoadingButton from '@mui/lab/LoadingButton'
 
 import styles from './Login.module.scss'
 
-import { wrapAsyncFunction, USERS_URL } from '../../shared'
-import { Navigate } from 'react-router-dom'
-import { useAppDispatch } from '../../app/hooks'
-import { login } from '../../redux/auth/slice'
-import { selectIsAuth } from '../../redux/auth/selectors'
-import { useSelector } from 'react-redux'
-
-interface UserItem {
-  name: string
-  username: string
-  avatar: string
-  email: string
-  id: string
-}
+import { wrapAsyncFunction, USERS_URL } from 'shared'
+import type { UserItem } from 'shared'
+import { useAppDispatch } from 'app/hooks'
+import { login } from 'slices/auth/slice'
 
 const Login: FC = React.memo(() => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const isAuth = useSelector(selectIsAuth)
   const dispatch = useAppDispatch()
 
   React.useEffect(() => {
     if (username.length !== 0) {
       setError('')
     }
-  }, [username, isAuth])
+  }, [username])
 
   const isValid = useMemo(
     () => Boolean(username) && Boolean(password),
@@ -63,10 +52,6 @@ const Login: FC = React.memo(() => {
     } catch (e) {
       console.log(e)
     }
-  }
-
-  if (isAuth) {
-    return <Navigate to='/' />
   }
 
   return (

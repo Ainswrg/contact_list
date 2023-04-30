@@ -14,10 +14,8 @@ import {
   ListItemAvatar,
   Avatar,
   Typography,
-  Button,
-  InputBase
+  Button
 } from '@mui/material'
-import { styled, alpha } from '@mui/material/styles'
 import type { Theme } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import {
@@ -26,12 +24,11 @@ import {
   Logout as LogoutIcon,
   Search as SearchIcon
 } from '@mui/icons-material'
-import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router-dom'
-import { selectIsAuth } from '../../slices/auth/selectors'
-import { logout } from '../../slices/auth/slice'
-import { CONTACT_LIST } from '../../shared'
-import { useAppDispatch } from '../../app/hooks'
+import { logout } from 'slices/auth/slice'
+import type { ContactItem } from 'shared'
+import { CONTACT_LIST } from 'shared'
+import { useAppDispatch } from 'app/hooks'
+import { Search, SearchIconWrapper, StyledInputBase } from './styled'
 
 const useStyles: any = makeStyles((theme: Theme) => ({
   toolbar: {
@@ -47,59 +44,11 @@ const useStyles: any = makeStyles((theme: Theme) => ({
   }
 }))
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.black, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25)
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto'
-  }
-}))
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-}))
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch'
-    }
-  }
-}))
-
-interface ContactItem {
-  name: string
-  phone: string
-  avatar: string
-  id: string
-}
-
 const ContactsList: FC = () => {
   const [selectedContact, setSelectedContact] = useState<ContactItem | null>(
     null
   )
   const [contactsList, setContactsList] = useState<ContactItem[]>([])
-  const isAuth = useSelector(selectIsAuth)
   const dispatch = useAppDispatch()
 
   const classes = useStyles()
@@ -133,10 +82,6 @@ const ContactsList: FC = () => {
 
   const handleSearch = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
     console.log(e.target.value)
-  }
-
-  if (!isAuth) {
-    return <Navigate to='/login' />
   }
 
   return (

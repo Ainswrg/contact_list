@@ -1,6 +1,6 @@
 import React from 'react'
 import type { FC } from 'react'
-import { AppRoutes } from './AppRoutes'
+import { AppRoutes } from 'app/AppRoutes'
 
 const App: FC = () => {
   return (
