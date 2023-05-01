@@ -20,3 +20,13 @@ export interface ContactItem {
   avatar: string
   id: string
 }
+
+export interface AuthState {
+  isAuth: boolean
+}
+export type TypeStatus = 'idle' | 'loading' | 'failed' | 'success'
+
+export interface UserState {
+  data: UserItem[] | null
+  status: TypeStatus
+}

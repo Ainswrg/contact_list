@@ -6,23 +6,17 @@ import LoadingButton from '@mui/lab/LoadingButton'
 
 import styles from './Login.module.scss'
 
-import { wrapAsyncFunction, USERS_URL } from 'shared'
-import type { UserItem } from 'shared'
-import { useAppDispatch } from 'app/hooks'
+import { wrapAsyncFunction } from 'shared'
+import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { login } from 'slices/auth/slice'
+import { fetchUsers } from 'slices/user/slice'
+import { selectUserStatus } from 'slices/user/selectors'
 
 const Login: FC = React.memo(() => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const dispatch = useAppDispatch()
-
-  React.useEffect(() => {
-    if (username.length !== 0) {
-      setError('')
-    }
-  }, [username])
+  const status = useAppSelector(selectUserStatus)
 
   const isValid = useMemo(
     () => Boolean(username) && Boolean(password),
@@ -34,24 +28,12 @@ const Login: FC = React.memo(() => {
   ): Promise<void> => {
     e.preventDefault()
     try {
-      setIsLoading(true)
-      const response = await fetch(USERS_URL)
-      const userList: UserItem[] = await response.json()
+      const isUserFound = await dispatch(fetchUsers(username)).unwrap()
 
-      const foundUser: UserItem | undefined = userList.find(
-        (user: UserItem) => user.username === username
-      )
-
-      if (foundUser === undefined) {
-        setError('User not found')
-      } else {
-        setError('')
+      if (isUserFound.length !== 0) {
         dispatch(login())
       }
-      setIsLoading(false)
-    } catch (e) {
-      console.log(e)
-    }
+    } catch (err) {}
   }
 
   return (
@@ -62,13 +44,13 @@ const Login: FC = React.memo(() => {
       <form onSubmit={wrapAsyncFunction(onSubmit)}>
         <TextField
           className={styles.field}
-          label={error.length !== 0 ? 'Error' : 'Username'}
+          label={status === 'failed' ? 'Error' : 'Username'}
           onChange={(e) => {
             setUsername(e.target.value)
           }}
           value={username}
           fullWidth
-          error={Boolean(error)}
+          error={status === 'failed'}
         />
         <TextField
           className={styles.field}
@@ -80,13 +62,13 @@ const Login: FC = React.memo(() => {
           type='password'
           fullWidth
         />
-        {error.length !== 0
+        {status === 'failed'
           ? (
           <FormHelperText
             sx={{ display: 'flex', justifyContent: 'center' }}
             error
           >
-            {error}
+            {'User not found'}
           </FormHelperText>
             )
           : (
@@ -98,7 +80,7 @@ const Login: FC = React.memo(() => {
           size='large'
           variant='contained'
           fullWidth
-          loading={isLoading}
+          loading={status === 'loading'}
         >
           Login
         </LoadingButton>
