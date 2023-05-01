@@ -22,8 +22,11 @@ import {
   Search as SearchIcon
 } from '@mui/icons-material'
 
-import { CONTACT_LIST, type ContactItem } from 'shared'
+import { type ContactItem } from 'shared'
 import { Search, SearchIconWrapper, StyledInputBase } from './styled'
+import { useAppDispatch, useAppSelector } from 'app/hooks'
+import { selectContacts } from 'slices/contact/selectors'
+import { fetchContact } from 'slices/contact/slice'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -38,16 +41,15 @@ const ContactsList: FC = () => {
   const [selectedContact, setSelectedContact] = useState<ContactItem | null>(
     null
   )
-  const [contactsList, setContactsList] = useState<ContactItem[]>([])
+  const dispatch = useAppDispatch()
+  const contactsList = useAppSelector(selectContacts)
 
   const classes = useStyles()
 
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch(CONTACT_LIST)
-        const res = await response.json()
-        setContactsList(res)
+        await dispatch(fetchContact())
       } catch (e) {
         console.log(e)
       }
@@ -59,7 +61,6 @@ const ContactsList: FC = () => {
     console.log('selectedContact: ', selectedContact)
     // onEdit(contact)
   }
-
   const handleDelete = (contact: ContactItem): void => {
     setSelectedContact(null)
     // onDelete(contact)

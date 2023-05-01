@@ -21,6 +21,10 @@ export interface ContactItem {
   id: string
 }
 
+export interface ContactState {
+  list: ContactItem[]
+}
+
 export interface AuthState {
   isAuth: boolean
 }
