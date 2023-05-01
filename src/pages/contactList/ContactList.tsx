@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useEffect, useState } from 'react'
-import type { FC, ChangeEvent } from 'react'
+import React, { useEffect, useState, type FC, type ChangeEvent } from 'react'
 import {
   Table,
   TableBody,
@@ -10,32 +9,23 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Toolbar,
   ListItemAvatar,
   Avatar,
   Typography,
-  Button
+  Button,
+  type Theme
 } from '@mui/material'
-import type { Theme } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Logout as LogoutIcon,
   Search as SearchIcon
 } from '@mui/icons-material'
-import { logout } from 'slices/auth/slice'
-import type { ContactItem } from 'shared'
-import { CONTACT_LIST } from 'shared'
-import { useAppDispatch } from 'app/hooks'
+
+import { CONTACT_LIST, type ContactItem } from 'shared'
 import { Search, SearchIconWrapper, StyledInputBase } from './styled'
 
-const useStyles: any = makeStyles((theme: Theme) => ({
-  toolbar: {
-    backgroundColor: '#400CCC',
-    display: 'flex',
-    justifyContent: 'flex-end'
-  },
+const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
     backgroundColor: 'lightGray'
   },
@@ -49,7 +39,6 @@ const ContactsList: FC = () => {
     null
   )
   const [contactsList, setContactsList] = useState<ContactItem[]>([])
-  const dispatch = useAppDispatch()
 
   const classes = useStyles()
 
@@ -76,27 +65,12 @@ const ContactsList: FC = () => {
     // onDelete(contact)
   }
 
-  const handleLogout = (): void => {
-    dispatch(logout())
-  }
-
   const handleSearch = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
     console.log(e.target.value)
   }
 
   return (
     <>
-      <Toolbar className={classes.toolbar}>
-        <Typography>Logout</Typography>
-        <IconButton
-          aria-label='logout'
-          onClick={() => {
-            handleLogout()
-          }}
-        >
-          <LogoutIcon />
-        </IconButton>
-      </Toolbar>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label='contacts table'>
           <TableHead>

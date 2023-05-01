@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { AnyAction, Reducer } from '@reduxjs/toolkit'
-import type { IAuth } from './types'
+import type { AuthState } from 'shared'
 
-const initialState: IAuth = {
+const initialState: AuthState = {
   isAuth: localStorage.getItem('isAuth') === 'true'
 }
 export const authSlice = createSlice({
@@ -20,5 +20,5 @@ export const authSlice = createSlice({
   }
 })
 
-export const authReducer: Reducer<IAuth, AnyAction> = authSlice.reducer
+export const authReducer: Reducer<AuthState, AnyAction> = authSlice.reducer
 export const { login, logout } = authSlice.actions
