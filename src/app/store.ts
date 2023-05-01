@@ -1,14 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
-import type { ThunkAction, Action, AnyAction, Reducer } from '@reduxjs/toolkit'
-import { authReducer } from '../slices/auth/slice'
-
-interface IAuth {
-  isAuth: boolean
-}
+import type { ThunkAction, Action } from '@reduxjs/toolkit'
+import { authReducer } from 'slices/auth/slice'
+import { userReducer } from 'slices/user/slice'
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer as Reducer<IAuth, AnyAction>
+    auth: authReducer,
+    user: userReducer
   }
 })
 
