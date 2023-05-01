@@ -23,6 +23,7 @@ export interface ContactItem {
 
 export interface ContactState {
   list: ContactItem[]
+  status: TypeStatus
 }
 
 export interface AuthState {

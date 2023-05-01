@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useEffect, useState, type FC, type ChangeEvent } from 'react'
+import React, { useEffect, type FC, type ChangeEvent } from 'react'
 import {
   Table,
   TableBody,
@@ -26,7 +26,7 @@ import { type ContactItem } from 'shared'
 import { Search, SearchIconWrapper, StyledInputBase } from './styled'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { selectContacts } from 'slices/contact/selectors'
-import { fetchContact } from 'slices/contact/slice'
+import { deleteContact, fetchContact } from 'slices/contact/slice'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -38,9 +38,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 const ContactsList: FC = () => {
-  const [selectedContact, setSelectedContact] = useState<ContactItem | null>(
-    null
-  )
   const dispatch = useAppDispatch()
   const contactsList = useAppSelector(selectContacts)
 
@@ -57,13 +54,10 @@ const ContactsList: FC = () => {
   }, [])
 
   const handleEdit = (contact: ContactItem): void => {
-    setSelectedContact(contact)
-    console.log('selectedContact: ', selectedContact)
-    // onEdit(contact)
+    console.log('selectedContact: ', contact)
   }
   const handleDelete = (contact: ContactItem): void => {
-    setSelectedContact(null)
-    // onDelete(contact)
+    dispatch(deleteContact(contact.id))
   }
 
   const handleSearch = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
