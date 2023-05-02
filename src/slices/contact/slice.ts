@@ -1,14 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { AnyAction, Reducer, PayloadAction } from '@reduxjs/toolkit'
-import { CONTACT_LIST, type ContactState, type ContactItem } from 'shared'
+import { CONTACT_LIST, type ContactsState, type ContactItem } from 'shared'
 
-const initialState: ContactState = {
+const initialState: ContactsState = {
   list: [],
   status: 'idle'
 }
 
-export const fetchContact = createAsyncThunk<ContactItem[]>(
-  'contact/fetchContact',
+export const fetchContacts = createAsyncThunk<ContactItem[]>(
+  'contact/fetchContacts',
   async () => {
     try {
       const response = await fetch(CONTACT_LIST)
@@ -38,29 +38,29 @@ export const contactSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchContact.pending, (state: ContactState) => {
+      .addCase(fetchContacts.pending, (state: ContactsState) => {
         state.status = 'loading'
       })
-      .addCase(fetchContact.fulfilled, (state: ContactState, action: PayloadAction<ContactItem[]>) => {
+      .addCase(fetchContacts.fulfilled, (state: ContactsState, action: PayloadAction<ContactItem[]>) => {
         state.status = 'success'
         state.list = action.payload
       })
-      .addCase(fetchContact.rejected, (state: ContactState) => {
+      .addCase(fetchContacts.rejected, (state: ContactsState) => {
         state.status = 'failed'
       })
-      .addCase(deleteContact.pending, (state: ContactState) => {
+      .addCase(deleteContact.pending, (state: ContactsState) => {
         state.status = 'loading'
       })
-      .addCase(deleteContact.fulfilled, (state: ContactState, action: PayloadAction<string>) => {
+      .addCase(deleteContact.fulfilled, (state: ContactsState, action: PayloadAction<string>) => {
+        state.status = 'success'
         if (action?.payload.length !== 0) {
           state.list = state.list.filter((contact) => contact.id !== action.payload)
-          state.status = 'success'
         }
       })
-      .addCase(deleteContact.rejected, (state: ContactState) => {
+      .addCase(deleteContact.rejected, (state: ContactsState) => {
         state.status = 'failed'
       })
   }
 })
 
-export const contactReducer: Reducer<ContactState, AnyAction> = contactSlice.reducer
+export const contactReducer: Reducer<ContactsState, AnyAction> = contactSlice.reducer

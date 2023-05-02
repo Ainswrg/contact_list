@@ -21,7 +21,7 @@ export interface ContactItem {
   id: string
 }
 
-export interface ContactState {
+export interface ContactsState {
   list: ContactItem[]
   status: TypeStatus
 }

@@ -25,8 +25,8 @@ import {
 import { type ContactItem } from 'shared'
 import { Search, SearchIconWrapper, StyledInputBase } from './styled'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
-import { selectContacts } from 'slices/contact/selectors'
-import { deleteContact, fetchContact } from 'slices/contact/slice'
+import { selectContacts, selectContactsStatus } from 'slices/contact/selectors'
+import { deleteContact, fetchContacts } from 'slices/contact/slice'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -40,13 +40,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 const ContactsList: FC = () => {
   const dispatch = useAppDispatch()
   const contactsList = useAppSelector(selectContacts)
-
+  const status = useAppSelector(selectContactsStatus)
   const classes = useStyles()
 
   useEffect(() => {
     (async () => {
       try {
-        await dispatch(fetchContact())
+        await dispatch(fetchContacts())
       } catch (e) {
         console.log(e)
       }
@@ -114,6 +114,7 @@ const ContactsList: FC = () => {
                     onClick={() => {
                       handleEdit(contact)
                     }}
+                    disabled={status === 'loading'}
                   >
                     <EditIcon />
                   </IconButton>
@@ -122,6 +123,7 @@ const ContactsList: FC = () => {
                     onClick={() => {
                       handleDelete(contact)
                     }}
+                    disabled={status === 'loading'}
                   >
                     <DeleteIcon />
                   </IconButton>
