@@ -6,16 +6,22 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "standard-with-typescript"
+    "standard-with-typescript",
+    "plugin:storybook/recommended"
   ],
   "overrides": [],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "plugins": ["prettier", "react"],
+  "plugins": [
+    "prettier",
+    "react"
+  ],
   "rules": {
     "semi": "off",
-    "@typescript-eslint/semi": ["error"],
+    "@typescript-eslint/semi": [
+      "error"
+    ],
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off"
   }
