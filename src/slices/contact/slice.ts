@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { AnyAction, Reducer, PayloadAction } from '@reduxjs/toolkit'
-import { CONTACT_LIST, type ContactsState, type ContactItem } from 'shared'
+import { CONTACTS_URL, type ContactsState, type ContactItem } from 'shared'
 
 const initialState: ContactsState = {
   list: [],
@@ -11,7 +11,7 @@ export const fetchContacts = createAsyncThunk<ContactItem[]>(
   'contact/fetchContacts',
   async () => {
     try {
-      const response = await fetch(CONTACT_LIST)
+      const response = await fetch(CONTACTS_URL)
       return await response.json()
     } catch (err) {
       return err
@@ -23,7 +23,7 @@ export const deleteContact = createAsyncThunk<string, string>(
   'contact/deleteContact',
   async (id): Promise<string> => {
     try {
-      await fetch(`${CONTACT_LIST}/${id}`, {
+      await fetch(`${CONTACTS_URL}/${id}`, {
         method: 'DELETE'
       })
       return id
