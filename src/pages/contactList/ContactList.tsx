@@ -11,7 +11,8 @@ import {
   IconButton,
   Typography,
   Button,
-  type Theme
+  type Theme,
+  ListItemAvatar
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import {
@@ -26,6 +27,7 @@ import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { selectContacts, selectContactsStatus } from 'slices/contact/selectors'
 import { deleteContact, fetchContacts } from 'slices/contact/slice'
 import { ModalForm } from 'features/addForm/AddForm'
+import { AvatarBase } from 'widgets/Avatar/AvatarBase'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -62,13 +64,15 @@ const ContactsList: FC = () => {
     dispatch(deleteContact(contact.id))
   }
 
-  const handleSearch = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void => {
+  const handleSearch = (
+    e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ): void => {
     console.log(e.target.value)
   }
 
   return (
     <>
-      <ModalForm open={openModal} setOpen={setOpenModal}/>
+      <ModalForm open={openModal} setOpen={setOpenModal} />
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label='contacts table'>
           <TableHead>
@@ -82,7 +86,9 @@ const ContactsList: FC = () => {
             <TableRow>
               <TableCell colSpan={2}>
                 <Button size='medium' variant='contained'>
-                  <Typography onClick={handleOpen} variant='button'>Add contact</Typography>
+                  <Typography onClick={handleOpen} variant='button'>
+                    Add contact
+                  </Typography>
                 </Button>
               </TableCell>
               <TableCell colSpan={1}>
@@ -91,16 +97,21 @@ const ContactsList: FC = () => {
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
-                    placeholder="Search…"
+                    placeholder='Search…'
                     inputProps={{ 'aria-label': 'search' }}
-                    onChange={(e) => { handleSearch(e) }}
+                    onChange={(e) => {
+                      handleSearch(e)
+                    }}
                   />
                 </Search>
               </TableCell>
             </TableRow>
             {contactsList.map((contact) => (
               <TableRow key={contact.id}>
-                <TableCell>
+                <TableCell component='th' scope='row' sx={{ display: 'flex' }}>
+                  <ListItemAvatar>
+                      <AvatarBase />
+                  </ListItemAvatar>
                   {contact.name}
                 </TableCell>
                 <TableCell align='right'>{contact.phone}</TableCell>

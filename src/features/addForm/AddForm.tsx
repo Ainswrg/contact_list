@@ -56,9 +56,7 @@ export const ModalForm: FC<stateModal> = ({ open, setOpen }) => {
     const phoneInput = e.currentTarget.elements.namedItem('phone')
     const phone = phoneInput instanceof HTMLInputElement ? phoneInput.value : ''
     const contact = { name, phone }
-    console.log(contact)
     await dispatch(addContact(contact))
-    console.log(status)
   }
 
   return (
@@ -107,11 +105,12 @@ export const ModalForm: FC<stateModal> = ({ open, setOpen }) => {
                 : <Typography sx={{ paddingTop: '23px' }}></Typography>
               }
               <Button
-                disabled={false}
+                disabled={status === 'loading'}
                 type="submit"
                 size="large"
                 variant="contained"
                 fullWidth
+                onClick={handleClose}
               >
                 Add
               </Button>
