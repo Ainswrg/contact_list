@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useEffect, type FC, type ChangeEvent } from 'react'
+import React, { useEffect, type FC, type ChangeEvent, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -9,8 +9,6 @@ import {
   TableRow,
   Paper,
   IconButton,
-  ListItemAvatar,
-  Avatar,
   Typography,
   Button,
   type Theme
@@ -27,6 +25,7 @@ import { Search, SearchIconWrapper, StyledInputBase } from './styled'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { selectContacts, selectContactsStatus } from 'slices/contact/selectors'
 import { deleteContact, fetchContacts } from 'slices/contact/slice'
+import { ModalForm } from 'features/addForm/AddForm'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -42,6 +41,9 @@ const ContactsList: FC = () => {
   const contactsList = useAppSelector(selectContacts)
   const status = useAppSelector(selectContactsStatus)
   const classes = useStyles()
+  const [openModal, setOpenModal] = useState<boolean>(false)
+
+  const handleOpen = (): void => setOpenModal(true)
 
   useEffect(() => {
     (async () => {
@@ -66,6 +68,7 @@ const ContactsList: FC = () => {
 
   return (
     <>
+      <ModalForm open={openModal} setOpen={setOpenModal}/>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label='contacts table'>
           <TableHead>
@@ -79,7 +82,7 @@ const ContactsList: FC = () => {
             <TableRow>
               <TableCell colSpan={2}>
                 <Button size='medium' variant='contained'>
-                  <Typography variant='button'>Add contact</Typography>
+                  <Typography onClick={handleOpen} variant='button'>Add contact</Typography>
                 </Button>
               </TableCell>
               <TableCell colSpan={1}>
@@ -97,14 +100,7 @@ const ContactsList: FC = () => {
             </TableRow>
             {contactsList.map((contact) => (
               <TableRow key={contact.id}>
-                <TableCell component='th' scope='row' sx={{ display: 'flex' }}>
-                  <ListItemAvatar>
-                    <Avatar
-                      variant='square'
-                      alt='Remy Sharp'
-                      src={contact.avatar}
-                    />
-                  </ListItemAvatar>
+                <TableCell>
                   {contact.name}
                 </TableCell>
                 <TableCell align='right'>{contact.phone}</TableCell>
