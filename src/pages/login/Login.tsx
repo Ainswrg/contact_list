@@ -60,6 +60,7 @@ const Login: FC = React.memo(() => {
           value={password}
           label='Password'
           type='password'
+          error={status === 'failed'}
           fullWidth
         />
         {status === 'failed'
@@ -68,7 +69,7 @@ const Login: FC = React.memo(() => {
             sx={{ display: 'flex', justifyContent: 'center' }}
             error
           >
-            {'User not found'}
+            {'The user or password id incorrect'}
           </FormHelperText>
             )
           : (

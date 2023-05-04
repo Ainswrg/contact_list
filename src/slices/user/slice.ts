@@ -14,8 +14,11 @@ export const fetchUsers = createAsyncThunk(
       const response = await fetch(USERS_URL)
       const usersList = await response.json() as UserItem[]
       const user = usersList.filter(({ username }) => username === userNameFromInput)
-      localStorage.setItem('username', user[0].username)
-      return user
+      if (user.length !== 0) {
+        localStorage.setItem('username', user[0]?.username)
+        return user
+      }
+      return rejectWithValue('err')
     } catch (err) {
       return rejectWithValue(err)
     }
@@ -32,8 +35,10 @@ export const userSlice = createSlice({
         state.data = null
       })
       .addCase(fetchUsers.fulfilled, (state: UserState, action: PayloadAction<UserItem[]>) => {
-        state.data = action.payload
         state.status = 'success'
+        if (action.payload.length !== 0) {
+          state.data = action.payload
+        }
       })
       .addCase(fetchUsers.rejected, (state: UserState) => {
         state.status = 'failed'

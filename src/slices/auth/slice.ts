@@ -15,7 +15,7 @@ export const authSlice = createSlice({
     },
     logout: (state) => {
       state.isAuth = false
-      localStorage.setItem('isAuth', 'true')
+      localStorage.setItem('isAuth', 'false')
     }
   }
 })
