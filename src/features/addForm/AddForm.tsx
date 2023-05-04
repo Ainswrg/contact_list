@@ -5,7 +5,7 @@ import Modal from '@mui/material/Modal'
 import Fade from '@mui/material/Fade'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import { FormHelperText, Paper, TextField } from '@mui/material'
+import { FormHelperText, Paper, TextField, type Theme } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { selectContactsStatus } from 'slices/contact/selectors'
@@ -24,9 +24,9 @@ const style = {
   p: 4
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   form: {
-    margin: '5px 0',
+    margin: '30px 0 10px',
     display: 'flex',
     flexDirection: 'column',
     rowGap: '10px'
