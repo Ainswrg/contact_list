@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useEffect, type FC, type ChangeEvent, useState } from 'react'
+import React, { useEffect, type FC, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -17,18 +17,17 @@ import {
 import { makeStyles } from '@mui/styles'
 import {
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  Search as SearchIcon
+  Delete as DeleteIcon
 } from '@mui/icons-material'
 
 import { type ContactItem } from 'shared'
-import { Search, SearchIconWrapper, StyledInputBase } from './styled'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { selectContacts, selectContactsStatus } from 'slices/contact/selectors'
 import { deleteContact, fetchContacts } from 'slices/contact/slice'
 import { ModalForm } from 'features/addForm/AddForm'
 import { AvatarBase } from 'widgets/Avatar/AvatarBase'
 import { EditForm } from 'features/editForm/EditForm'
+import { SearchComponent } from 'features/search/SearchComponent'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -47,6 +46,8 @@ const ContactsList: FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [openEditModal, setOpenEditModal] = useState<boolean>(false)
   const [selectedContact, setSelectedContact] = useState<ContactItem | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filteredList, setFilteredList] = useState(contactsList)
 
   const handleOpen = (): void => setOpenModal(true)
 
@@ -60,6 +61,19 @@ const ContactsList: FC = () => {
     })()
   }, [])
 
+  useEffect(() => {
+    const newList = contactsList.filter((contact) => {
+      if (searchTerm === '') {
+        return contact
+      }
+      return (
+        contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        contact.phone.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    })
+    setFilteredList(newList)
+  }, [searchTerm, contactsList])
+
   const handleEdit = async (contact: ContactItem): Promise<void> => {
     setSelectedContact(contact)
     setOpenEditModal(true)
@@ -67,12 +81,6 @@ const ContactsList: FC = () => {
 
   const handleDelete = (contact: ContactItem): void => {
     dispatch(deleteContact(contact.id))
-  }
-
-  const handleSearch = (
-    e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ): void => {
-    console.log(e.target.value)
   }
 
   return (
@@ -83,9 +91,9 @@ const ContactsList: FC = () => {
         <Table className={classes.table} aria-label='contacts table'>
           <TableHead>
             <TableRow className={classes.tableHead}>
-              <TableCell>Name</TableCell>
-              <TableCell align='right'>Phone</TableCell>
-              <TableCell align='right'>Actions</TableCell>
+              <TableCell width={'33%'}>Name</TableCell>
+              <TableCell width={'33%'} align='right'>Phone</TableCell>
+              <TableCell width={'33%'} align='right'>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -98,21 +106,12 @@ const ContactsList: FC = () => {
                 </Button>
               </TableCell>
               <TableCell colSpan={1}>
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder='Search…'
-                    inputProps={{ 'aria-label': 'search' }}
-                    onChange={(e) => {
-                      handleSearch(e)
-                    }}
-                  />
-                </Search>
+                <SearchComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
               </TableCell>
             </TableRow>
-            {contactsList.map((contact) => (
+            {(filteredList.length === 0 && searchTerm.length === 0
+              ? contactsList
+              : filteredList).map((contact) => (
               <TableRow key={contact.id}>
                 <TableCell component='th' scope='row' sx={{ display: 'flex' }}>
                   <ListItemAvatar>
