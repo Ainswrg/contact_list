@@ -51,6 +51,24 @@ export const addContact = createAsyncThunk<ContactItem, Omit<ContactItem, 'id'>>
   }
 )
 
+export const editContact = createAsyncThunk<ContactItem, ContactItem>(
+  'contact/editContact',
+  async (editedContact) => {
+    try {
+      const response = await fetch(`${CONTACTS_URL}/${editedContact.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(editedContact)
+      })
+      return await response.json()
+    } catch (err) {
+      return await Promise.reject(err)
+    }
+  }
+)
+
 export const contactSlice = createSlice({
   name: 'contact',
   initialState,
@@ -67,6 +85,7 @@ export const contactSlice = createSlice({
       .addCase(fetchContacts.rejected, (state: ContactsState) => {
         state.status = 'failed'
       })
+
       .addCase(deleteContact.pending, (state: ContactsState) => {
         state.status = 'loading'
       })
@@ -79,6 +98,7 @@ export const contactSlice = createSlice({
       .addCase(deleteContact.rejected, (state: ContactsState) => {
         state.status = 'failed'
       })
+
       .addCase(addContact.pending, (state: ContactsState) => {
         state.status = 'loading'
       })
@@ -89,6 +109,25 @@ export const contactSlice = createSlice({
         }
       })
       .addCase(addContact.rejected, (state: ContactsState) => {
+        state.status = 'failed'
+      })
+
+      .addCase(editContact.pending, (state: ContactsState) => {
+        state.status = 'loading'
+      })
+      .addCase(editContact.fulfilled, (state: ContactsState, action: PayloadAction<ContactItem>) => {
+        state.status = 'success'
+        if (action?.payload !== undefined) {
+          state.list = [...state.list].map((contact) => {
+            if (contact.id === action.payload.id) {
+              return action.payload
+            }
+
+            return contact
+          })
+        }
+      })
+      .addCase(editContact.rejected, (state: ContactsState) => {
         state.status = 'failed'
       })
   }

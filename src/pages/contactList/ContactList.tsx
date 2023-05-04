@@ -28,6 +28,7 @@ import { selectContacts, selectContactsStatus } from 'slices/contact/selectors'
 import { deleteContact, fetchContacts } from 'slices/contact/slice'
 import { ModalForm } from 'features/addForm/AddForm'
 import { AvatarBase } from 'widgets/Avatar/AvatarBase'
+import { EditForm } from 'features/editForm/EditForm'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -44,6 +45,8 @@ const ContactsList: FC = () => {
   const status = useAppSelector(selectContactsStatus)
   const classes = useStyles()
   const [openModal, setOpenModal] = useState<boolean>(false)
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false)
+  const [selectedContact, setSelectedContact] = useState<ContactItem | null>(null)
 
   const handleOpen = (): void => setOpenModal(true)
 
@@ -57,9 +60,11 @@ const ContactsList: FC = () => {
     })()
   }, [])
 
-  const handleEdit = (contact: ContactItem): void => {
-    console.log('selectedContact: ', contact)
+  const handleEdit = async (contact: ContactItem): Promise<void> => {
+    setSelectedContact(contact)
+    setOpenEditModal(true)
   }
+
   const handleDelete = (contact: ContactItem): void => {
     dispatch(deleteContact(contact.id))
   }
@@ -72,6 +77,7 @@ const ContactsList: FC = () => {
 
   return (
     <>
+      <EditForm open={openEditModal} setOpen={setOpenEditModal} selectedContact={selectedContact}/>
       <ModalForm open={openModal} setOpen={setOpenModal} />
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label='contacts table'>
