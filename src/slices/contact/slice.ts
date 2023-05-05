@@ -9,15 +9,17 @@ const initialState: ContactsState = {
 
 interface Params {
   search: string
+  order: string
 }
 
 export const fetchContacts = createAsyncThunk<ContactItem[], Params>(
   'contact/fetchContacts',
-  async (params) => {
-    const { search } = params
+  async ({ search, order }) => {
     const url = new URL(CONTACTS_URL)
     url.searchParams.append('sortBy', 'name')
     url.searchParams.append('search', search)
+    url.searchParams.append('order', order)
+
     try {
       const response = await fetch(url)
       return await response.json()

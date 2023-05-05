@@ -29,6 +29,7 @@ import { AvatarBase } from 'widgets/Avatar/AvatarBase'
 import { EditForm } from 'features/editForm/EditForm'
 import { SearchComponent } from 'features/search/SearchComponent'
 import { selectFilters } from 'slices/filter/selectors'
+import { Sort } from 'features/sort/Sort'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -47,19 +48,19 @@ const ContactsList: FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [openEditModal, setOpenEditModal] = useState<boolean>(false)
   const [selectedContact, setSelectedContact] = useState<ContactItem | null>(null)
-  const { searchValue } = useAppSelector(selectFilters)
+  const { searchValue, orderSort } = useAppSelector(selectFilters)
 
   const handleOpen = (): void => setOpenModal(true)
 
   useEffect(() => {
     (async () => {
       try {
-        await dispatch(fetchContacts({ search: searchValue }))
+        await dispatch(fetchContacts({ search: searchValue, order: orderSort }))
       } catch (e) {
         console.log(e)
       }
     })()
-  }, [searchValue])
+  }, [searchValue, orderSort])
 
   const handleEdit = async (contact: ContactItem): Promise<void> => {
     setSelectedContact(contact)
@@ -85,7 +86,7 @@ const ContactsList: FC = () => {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell colSpan={2}>
+              <TableCell colSpan={1}>
                 <Button size='medium' variant='contained'>
                   <Typography onClick={handleOpen} variant='button'>
                     Add contact
@@ -94,6 +95,9 @@ const ContactsList: FC = () => {
               </TableCell>
               <TableCell colSpan={1}>
                 <SearchComponent />
+              </TableCell>
+              <TableCell colSpan={1}>
+                <Sort />
               </TableCell>
             </TableRow>
             {contactsList.map((contact) => (

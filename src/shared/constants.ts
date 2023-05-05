@@ -33,3 +33,9 @@ export interface UserState {
   data: UserItem[] | null
   status: TypeStatus
 }
+
+export type OrderSort = 'asc' | 'desc'
+export interface FilterState {
+  searchValue: string
+  orderSort: OrderSort
+}
