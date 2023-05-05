@@ -1,9 +1,10 @@
-import { type ChangeEvent, type FC } from 'react'
-// import { Search } from '@mui/icons-material'
+import { useCallback, type ChangeEvent, type FC } from 'react'
 import { SearchIconWrapper } from 'pages/contactList/styled'
 import { Search as SearchIcon } from '@mui/icons-material'
 import { styled, alpha } from '@mui/material/styles'
-import { InputBase } from '@mui/material'
+import { InputBase, debounce } from '@mui/material'
+import { useAppDispatch } from 'app/hooks'
+import { setSearchValue } from 'slices/filter/slice'
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
@@ -21,9 +22,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.black, 0.15),
+  backgroundColor: alpha(theme.palette.common.black, 0.25),
   '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25)
+    backgroundColor: alpha(theme.palette.common.black, 0.15)
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
@@ -34,16 +35,20 @@ const Search = styled('div')(({ theme }) => ({
   }
 }))
 
-interface Props {
-  searchTerm: string
-  setSearchTerm: (e: string) => void
-}
+export const SearchComponent: FC = () => {
+  const dispatch = useAppDispatch()
 
-export const SearchComponent: FC<Props> = ({ searchTerm, setSearchTerm }) => {
+  const updateSearchValue = useCallback(
+    debounce((str: string) => {
+      dispatch(setSearchValue(str))
+    }, 250),
+    []
+  )
+
   const handleSearch = (
     e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ): void => {
-    setSearchTerm(e.target.value)
+    updateSearchValue(e.target.value)
   }
 
   return (

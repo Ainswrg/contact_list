@@ -28,6 +28,7 @@ import { ModalForm } from 'features/addForm/AddForm'
 import { AvatarBase } from 'widgets/Avatar/AvatarBase'
 import { EditForm } from 'features/editForm/EditForm'
 import { SearchComponent } from 'features/search/SearchComponent'
+import { selectFilters } from 'slices/filter/selectors'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -46,33 +47,19 @@ const ContactsList: FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [openEditModal, setOpenEditModal] = useState<boolean>(false)
   const [selectedContact, setSelectedContact] = useState<ContactItem | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filteredList, setFilteredList] = useState(contactsList)
+  const { searchValue } = useAppSelector(selectFilters)
 
   const handleOpen = (): void => setOpenModal(true)
 
   useEffect(() => {
     (async () => {
       try {
-        await dispatch(fetchContacts())
+        await dispatch(fetchContacts({ search: searchValue }))
       } catch (e) {
         console.log(e)
       }
     })()
-  }, [])
-
-  useEffect(() => {
-    const newList = contactsList.filter((contact) => {
-      if (searchTerm === '') {
-        return contact
-      }
-      return (
-        contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        contact.phone.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    })
-    setFilteredList(newList)
-  }, [searchTerm, contactsList])
+  }, [searchValue])
 
   const handleEdit = async (contact: ContactItem): Promise<void> => {
     setSelectedContact(contact)
@@ -106,12 +93,10 @@ const ContactsList: FC = () => {
                 </Button>
               </TableCell>
               <TableCell colSpan={1}>
-                <SearchComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
+                <SearchComponent />
               </TableCell>
             </TableRow>
-            {(filteredList.length === 0 && searchTerm.length === 0
-              ? contactsList
-              : filteredList).map((contact) => (
+            {contactsList.map((contact) => (
               <TableRow key={contact.id}>
                 <TableCell component='th' scope='row' sx={{ display: 'flex' }}>
                   <ListItemAvatar>

@@ -7,11 +7,19 @@ const initialState: ContactsState = {
   status: 'idle'
 }
 
-export const fetchContacts = createAsyncThunk<ContactItem[]>(
+interface Params {
+  search: string
+}
+
+export const fetchContacts = createAsyncThunk<ContactItem[], Params>(
   'contact/fetchContacts',
-  async () => {
+  async (params) => {
+    const { search } = params
+    const url = new URL(CONTACTS_URL)
+    url.searchParams.append('sortBy', 'name')
+    url.searchParams.append('search', search)
     try {
-      const response = await fetch(CONTACTS_URL)
+      const response = await fetch(url)
       return await response.json()
     } catch (err) {
       return err
