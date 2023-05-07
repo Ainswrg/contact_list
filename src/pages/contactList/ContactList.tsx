@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useEffect, type FC, useState } from 'react'
+import React, { useEffect, type FC, useState, useRef } from 'react'
+import qs from 'qs'
+import { useNavigate } from 'react-router-dom'
 import {
   Table,
   TableBody,
@@ -20,7 +22,7 @@ import {
   Delete as DeleteIcon
 } from '@mui/icons-material'
 
-import { type ContactItem } from 'shared'
+import { type OrderSort, type ContactItem } from 'shared'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
 import { selectContacts, selectContactsStatus } from 'slices/contact/selectors'
 import { deleteContact, fetchContacts } from 'slices/contact/slice'
@@ -30,6 +32,7 @@ import { EditForm } from 'features/editForm/EditForm'
 import { SearchComponent } from 'features/search/SearchComponent'
 import { selectFilters } from 'slices/filter/selectors'
 import { Sort } from 'features/sort/Sort'
+import { setOrderSort } from 'slices/filter/slice'
 
 const useStyles = makeStyles((theme: Theme) => ({
   tableHead: {
@@ -49,8 +52,39 @@ const ContactsList: FC = () => {
   const [openEditModal, setOpenEditModal] = useState<boolean>(false)
   const [selectedContact, setSelectedContact] = useState<ContactItem | null>(null)
   const { searchValue, orderSort } = useAppSelector(selectFilters)
+  const navigate = useNavigate()
+  const isMounted = useRef(false)
 
   const handleOpen = (): void => setOpenModal(true)
+
+  useEffect(() => {
+    const params = { sortBy: 'name', order: 'asc', search: '' }
+    const queryString = qs.stringify(params, { skipNulls: true, addQueryPrefix: true })
+    navigate(queryString)
+  }, [navigate])
+
+  useEffect(() => {
+    const params = qs.parse(location.search.substring(1))
+    if (params.order !== undefined) {
+      dispatch(setOrderSort(params.order as OrderSort))
+    }
+  }, [location.search, dispatch])
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const params = {
+        sortBy: 'name',
+        order: orderSort,
+        search: searchValue
+      }
+      const queryString = qs.stringify(params, {
+        skipNulls: true,
+        addQueryPrefix: true
+      })
+      navigate(`${location.pathname}${queryString}`)
+    }
+    isMounted.current = true
+  }, [searchValue, orderSort, navigate, location.pathname])
 
   useEffect(() => {
     (async () => {
