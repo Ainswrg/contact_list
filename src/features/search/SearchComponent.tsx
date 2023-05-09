@@ -1,42 +1,20 @@
-import { useCallback, type ChangeEvent, type FC } from 'react'
+import { useCallback, type ChangeEvent, type FC, useEffect, useRef, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import qs from 'qs'
 import { SearchIconWrapper } from 'pages/contactList/styled'
 import { Search as SearchIcon } from '@mui/icons-material'
-import { styled, alpha } from '@mui/material/styles'
-import { InputBase, debounce } from '@mui/material'
-import { useAppDispatch } from 'app/hooks'
-import { setSearchValue } from 'slices/filter/slice'
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch'
-    }
-  }
-}))
-
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.black, 0.25),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.black, 0.15)
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto'
-  }
-}))
+import { debounce } from '@mui/material'
+import { useAppDispatch, useAppSelector } from 'app/hooks'
+import { fetchContacts, selectFilters, setSearchValue } from 'slices'
+import { Search, StyledInputBase } from './styles'
 
 export const SearchComponent: FC = () => {
   const dispatch = useAppDispatch()
+  const { searchValue, orderSort } = useAppSelector(selectFilters)
+  const navigate = useNavigate()
+  const isMounted = useRef(false)
+
+  const memoizedParams = useMemo(() => ({ sortBy: 'name', order: orderSort, search: searchValue }), [searchValue, orderSort])
 
   const updateSearchValue = useCallback(
     debounce((str: string) => {
@@ -50,6 +28,34 @@ export const SearchComponent: FC = () => {
   ): void => {
     updateSearchValue(e.target.value)
   }
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const params = {
+        sortBy: 'name',
+        order: orderSort,
+        search: searchValue
+      }
+      const queryString = qs.stringify(params, {
+        skipNulls: true,
+        addQueryPrefix: true
+      })
+      navigate(`${location.pathname}${queryString}`)
+    }
+    isMounted.current = true
+  }, [searchValue, orderSort, navigate, location.pathname])
+
+  useEffect(() => {
+    const fetchContactsData = async (): Promise<void> => {
+      try {
+        await dispatch(fetchContacts(memoizedParams))
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchContactsData()
+  }, [searchValue, orderSort])
 
   return (
     <Search>
