@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import React, { useMemo, useState } from 'react'
 import type { FC } from 'react'
 import { FormHelperText, Paper, TextField, Typography } from '@mui/material'
@@ -8,11 +7,9 @@ import styles from './Login.module.scss'
 
 import { wrapAsyncFunction } from 'shared'
 import { useAppDispatch, useAppSelector } from 'app/hooks'
-import { login } from 'slices/auth/slice'
-import { fetchUsers } from 'slices/user/slice'
-import { selectUserStatus } from 'slices/user/selectors'
+import { login, fetchUsers, selectUserStatus } from 'slices'
 
-const Login: FC = React.memo(() => {
+const Login: FC = React.memo(function Login () {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useAppDispatch()
@@ -33,7 +30,9 @@ const Login: FC = React.memo(() => {
       if (isUserFound.length !== 0) {
         dispatch(login())
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   return (
