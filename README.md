@@ -14,4 +14,4 @@
 3. To install all dependencies use `pnpm install`
 4. Run the app use `pnpm start`
 
-## Screenshot: ![contactList-screen]![contactList](https://github.com/Ainswrg/contact_list/assets/78231573/71fb3fb5-5b62-4f83-95e5-1b2cd9fe2e64)
+## Screenshot: ![contactList-screen](https://github.com/Ainswrg/contact_list/assets/78231573/71fb3fb5-5b62-4f83-95e5-1b2cd9fe2e64)
